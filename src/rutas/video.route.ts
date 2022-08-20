@@ -1,6 +1,9 @@
 import { Response, } from 'restify';
 import { Router, } from 'restify-router';
 import videoController from '../controllers/video.controller';
+import RedditVideosController from '../controllers/redditVideos.controller';
+import redditVideosController from '../controllers/redditVideos.controller';
+
 
 const router = new Router();
 
@@ -40,6 +43,19 @@ router.post('/cutvideo', async (req, res): Promise<Response> => {
       return res.json({succes: false, error: error.stack})
     }
   });
+
+router.post('/getVideos', async (req, res): Promise<Response> => {
+    try {
+        const {cantidadVideos} = req.body
+        
+        await redditVideosController.getVideos(cantidadVideos);
+        return res.json({ success: true, });
+      } catch (error) {
+        return res.json({succes: false, error: error.stack})
+      }
+});
+
+
 
 
 export default router;

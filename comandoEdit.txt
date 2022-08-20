@@ -5,6 +5,7 @@ https://www.reddit.com/r/TikTokCringe/top/
 
 https://www.reddit.com/r/TikTokCringe/top.json
 https://www.reddit.com/r/TikTokCringe/top.json?limit=2
+https://www.reddit.com/r/TikTokCringe/top.json?sort=top&t=day&limit=2
 
 //Funcionalidad en Windows
 //Tener instalado jq , youtube-dl y ffmpeg
@@ -17,9 +18,14 @@ curl -H "User-agent: 'your bot 0.1'" https://www.reddit.com/r/TikTokCringe/top.j
 //terminal cmd " jq .  "
 curl -H "User-agent: 'your bot 0.1'" https://www.reddit.com/r/TikTokCringe/top.json?limit=12 | jq . | grep url_overridden_by_dest | grep -Eoh "https:\/\/v\.redd\.it\/\w{13}"
 
+
+
 youtube-dl $(curl -H "User-agent: 'your bot 0.1'" https://www.reddit.com/r/TikTokCringe/top.json?limit=3 | jq . | grep url_overridden_by_dest | grep -Eoh "https:\/\/v\.redd\.it\/\w{13}")
 youtube-dl $(curl -H "User-agent: 'your bot 0.1'" https://www.reddit.com/r/TikTokCringe/top.json?limit=3 | jq '.' | grep url_overridden_by_dest | grep -Eoh "https:\/\/v\.redd\.it\/\w{13}")
 
+//para indicar la ubicacion de descargars creamos un archivos .conf y configuramos alli la ubicacion de descargas
+//configuracion:  -o srcVideos/%(title)s-%(id)s.%(ext)s
+youtube-dl --config-location youtube-dl.conf https://v.redd.it/k3mxtddhqri91 https://v.redd.it/qcu4vbcyqpi91
 
 -------------------
 
