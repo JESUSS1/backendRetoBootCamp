@@ -1,0 +1,74 @@
+ffmpeg -y -i video1.mp4 -threads 4 -ss 00:00:00 -to 00:00:20 -async 1 video1_cut.mp4
+
+----------------------------------------------------------------------------
+https://www.reddit.com/r/TikTokCringe/top/
+
+https://www.reddit.com/r/TikTokCringe/top.json
+https://www.reddit.com/r/TikTokCringe/top.json?limit=2
+
+//Funcionalidad en Windows
+//Tener instalado jq , youtube-dl y ffmpeg
+
+curl -H "User-agent: 'your bot 0.1'" https://www.reddit.com/r/TikTokCringe/top.json?limit=2
+
+//terminal wsl  " jq'.' "
+curl -H "User-agent: 'your bot 0.1'" https://www.reddit.com/r/TikTokCringe/top.json?limit=12 | jq '.' | grep url_overridden_by_dest | grep -Eoh "https:\/\/v\.redd\.it\/\w{13}"
+
+//terminal cmd " jq .  "
+curl -H "User-agent: 'your bot 0.1'" https://www.reddit.com/r/TikTokCringe/top.json?limit=12 | jq . | grep url_overridden_by_dest | grep -Eoh "https:\/\/v\.redd\.it\/\w{13}"
+
+youtube-dl $(curl -H "User-agent: 'your bot 0.1'" https://www.reddit.com/r/TikTokCringe/top.json?limit=3 | jq . | grep url_overridden_by_dest | grep -Eoh "https:\/\/v\.redd\.it\/\w{13}")
+youtube-dl $(curl -H "User-agent: 'your bot 0.1'" https://www.reddit.com/r/TikTokCringe/top.json?limit=3 | jq '.' | grep url_overridden_by_dest | grep -Eoh "https:\/\/v\.redd\.it\/\w{13}")
+
+
+-------------------
+
+ffmpeg -i video1.mp4 -lavfi '[0:v]scale=ih*16/9:-1,boxblur=luma_radius=min(h\,w)/20:luma_power=1:chroma_radius=min(cw\,ch)/20:chroma_power=1[bg];[bg][0:v]overlay=(W-w)/2:(H-h)/2,crop=h=iw*9/16' -vb 800K danceblur.mp4
+
+//windows sin comillas en los argumentos de conversion
+ffmpeg -i video1.mp4 -threads 4 -lavfi [0:v]scale=ih*16/9:-1,boxblur=luma_radius=min(h\,w)/20:luma_power=1:chroma_radius=min(cw\,ch)/20:chroma_power=1[bg];[bg][0:v]overlay=(W-w)/2:(H-h)/2,crop=h=iw*9/16 -vb 800K danceblur.mp4
+ffmpeg -i video2.mp4 -lavfi [0:v]scale=ih*16/9:-1,boxblur=luma_radius=min(h\,w)/20:luma_power=1:chroma_radius=min(cw\,ch)/20:chroma_power=1[bg];[bg][0:v]overlay=(W-w)/2:(H-h)/2,crop=h=iw*9/16 -vb 800K danceblur.mp4
+------------------
+
+
+
+
+
+@echo off
+SetLocal EnableDelayedExpansion
+
+set nombre=%%G
+
+FOR /f "tokens=*" %%G IN ('dir /b *.avi *.mp4 *.mkv') DO (
+set nombre=%%G    
+call :TestFunc %%n !y! !x!
+)
+EndLocal
+exit /b
+
+:TestFunc
+SetLocal EnableDelayedExpansion
+
+ffmpeg -i %nombre% -threads 2 -lavfi [0:v]scale=ih*16/9:-1,boxblur=luma_radius=min(h\,w)/20:luma_power=1:chroma_radius=min(cw\,ch)/20:chroma_power=1[bg];[bg][0:v]overlay=(W-w)/2:(H-h)/2,crop=h=iw*9/16 -vb 800K data/%nombre%
+
+EndLocal
+goto :eof
+
+
+
+
+--------------------------------------------
+---------ELIMINAR LOS VIDEOS DESCARGADOS Y MEDIANTE UN BUCLE LISTAR TODOS LOS VIDEOS DE LA CARPETA ACTUAL Y DE LA CARPETA CREADA 'data'
+--------Y GUARDARLOS EN UN ARCHIVO.TXT {file data/nameVideo.mp4|avi|mkv} , FINALMENTE JUNTAR LOS VIDEOS EN UNO SOLO
+
+@echo off
+rm *.avi *.mp4 *.mkv
+FOR /f %%G IN ('dir data /b *.avi *.mp4 *.mkv') DO (
+echo file data/%%G >> nombreVideos.txt
+)
+ffmpeg -f concat -safe 0 -i nombreVideos.txt -threads 2 final.mp4
+
+
+
+
+
