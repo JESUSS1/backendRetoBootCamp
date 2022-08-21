@@ -9,18 +9,7 @@ const router = new Router();
 
 
 router.get('/test',(req, res)=> {
-
     return res.json({sucess:true}); 
-});
-
-router.get('/execute', async (req, res):Promise<Response> => {
-
-    try {
-        videoController.executeProcessToBuildReel();
-        return res.json({sucess:true}); 
-    } catch (error) {
-        return res.json({sucess:false,error:error.stack});
-    }
 });
 
 router.get('/ffmpeg', async (req, res):Promise<Response> => {
@@ -44,9 +33,9 @@ router.post('/cutvideo', async (req, res): Promise<Response> => {
     }
   });
 
-router.post('/getVideos', async (req, res): Promise<Response> => {
+router.post('/getVideosBgFilter', async (req, res): Promise<Response> => {
     try {
-        const {cantidadVideos} = req.body
+        const {cantidadVideos} = req.body;
         
         await redditVideosController.getVideos(cantidadVideos);
         return res.json({ success: true, });
@@ -55,6 +44,16 @@ router.post('/getVideos', async (req, res): Promise<Response> => {
       }
 });
 
+router.post('/unirVideos', async (req, res):Promise<Response> => {
+  try {
+      const {nameVideo,extension} = req.body;
+      await redditVideosController.unirVideos(nameVideo,extension);  
+
+      return res.json({sucess:true}); 
+  } catch (error) {
+      return res.json({sucess:false,error:error.stack});
+  }
+});
 
 
 

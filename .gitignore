@@ -1,3 +1,5 @@
 node_modules/
 srcVideos/*
+srcConvert/*
 package-lock.json
+listaUbicacionVideosC.txt

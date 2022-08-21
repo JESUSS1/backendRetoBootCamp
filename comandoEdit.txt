@@ -7,11 +7,12 @@ https://www.reddit.com/r/TikTokCringe/top.json
 https://www.reddit.com/r/TikTokCringe/top.json?limit=2
 https://www.reddit.com/r/TikTokCringe/top.json?sort=top&t=day&limit=2
 
+---------------------------------------------------------------------------------------
 //Funcionalidad en Windows
 //Tener instalado jq , youtube-dl y ffmpeg
 
 curl -H "User-agent: 'your bot 0.1'" https://www.reddit.com/r/TikTokCringe/top.json?limit=2
-
+---------------------------------------------------------------------------------------
 //terminal wsl  " jq'.' "
 curl -H "User-agent: 'your bot 0.1'" https://www.reddit.com/r/TikTokCringe/top.json?limit=12 | jq '.' | grep url_overridden_by_dest | grep -Eoh "https:\/\/v\.redd\.it\/\w{13}"
 
@@ -19,19 +20,20 @@ curl -H "User-agent: 'your bot 0.1'" https://www.reddit.com/r/TikTokCringe/top.j
 curl -H "User-agent: 'your bot 0.1'" https://www.reddit.com/r/TikTokCringe/top.json?limit=12 | jq . | grep url_overridden_by_dest | grep -Eoh "https:\/\/v\.redd\.it\/\w{13}"
 
 
-
+//linux
 youtube-dl $(curl -H "User-agent: 'your bot 0.1'" https://www.reddit.com/r/TikTokCringe/top.json?limit=3 | jq . | grep url_overridden_by_dest | grep -Eoh "https:\/\/v\.redd\.it\/\w{13}")
 youtube-dl $(curl -H "User-agent: 'your bot 0.1'" https://www.reddit.com/r/TikTokCringe/top.json?limit=3 | jq '.' | grep url_overridden_by_dest | grep -Eoh "https:\/\/v\.redd\.it\/\w{13}")
 
+//windows
 //para indicar la ubicacion de descargars creamos un archivos .conf y configuramos alli la ubicacion de descargas
 //configuracion:  -o srcVideos/%(title)s-%(id)s.%(ext)s
 youtube-dl --config-location youtube-dl.conf https://v.redd.it/k3mxtddhqri91 https://v.redd.it/qcu4vbcyqpi91
 
 -------------------
-
+//linux
 ffmpeg -i video1.mp4 -lavfi '[0:v]scale=ih*16/9:-1,boxblur=luma_radius=min(h\,w)/20:luma_power=1:chroma_radius=min(cw\,ch)/20:chroma_power=1[bg];[bg][0:v]overlay=(W-w)/2:(H-h)/2,crop=h=iw*9/16' -vb 800K danceblur.mp4
 
-//windows sin comillas en los argumentos de conversion
+//windows sin comillas en los argumentos de conversion , agregamos tambien un indicador de hilos a usar
 ffmpeg -i video1.mp4 -threads 4 -lavfi [0:v]scale=ih*16/9:-1,boxblur=luma_radius=min(h\,w)/20:luma_power=1:chroma_radius=min(cw\,ch)/20:chroma_power=1[bg];[bg][0:v]overlay=(W-w)/2:(H-h)/2,crop=h=iw*9/16 -vb 800K danceblur.mp4
 ffmpeg -i video2.mp4 -lavfi [0:v]scale=ih*16/9:-1,boxblur=luma_radius=min(h\,w)/20:luma_power=1:chroma_radius=min(cw\,ch)/20:chroma_power=1[bg];[bg][0:v]overlay=(W-w)/2:(H-h)/2,crop=h=iw*9/16 -vb 800K danceblur.mp4
 ------------------
