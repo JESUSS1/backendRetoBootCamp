@@ -1,6 +1,8 @@
 import { spawn } from 'child_process'
 import uuid4 from "uuid4";
 import path from "path";
+import ProcesosControler from './procesos.controller';
+import {tipoProcesos,listaComandos,dirRaiz} from '../utils/variablesUtiles';
 
 
 class ImitandoSonyVegas{
@@ -76,7 +78,42 @@ class ImitandoSonyVegas{
         }
     }
 
-    
+    async joinVideosV2(ubicacionCarpetaVideos:string,nameVideoFinal:string,extensionInput:string=".mp4",extensionOutput:string=".mp4",cantidadThreads:number=2){
+        
+        let args = [
+            '/b',
+            `${ubicacionCarpetaVideos}\\*${extensionInput}`];
+            ProcesosControler.procesoShell(listaComandos.dir,args,tipoProcesos.getNameVideos).then(resNames=>{
+            console.log(resNames);
+
+            if(resNames!=""){
+                const nameListVideosC = `listaUbicacionVideosV2.txt`;
+                ubicacionCarpetaVideos = ubicacionCarpetaVideos.replace(/\\/g,'\\\\')
+                let listVideos =  `file ${ubicacionCarpetaVideos}\\\\`+resNames.toString().replace(/,/g,`\nfile ${ubicacionCarpetaVideos}\\\\`)
+                //console.log(listVideos);
+                
+                ProcesosControler.createArchivoTxt(nameListVideosC,listVideos).then(errorCreation=>{
+                    if(errorCreation==null){
+                        let args = [
+                            '-f',
+                            'concat',
+                            '-safe 0',
+                            `-i ${dirRaiz}\\${nameListVideosC}`,
+                            `-threads ${cantidadThreads}`,
+                            `${ubicacionCarpetaVideos}\\${nameVideoFinal}${extensionOutput}`];
+                    
+                            ProcesosControler.procesoShell(listaComandos.ffmpeg,args,tipoProcesos.joinVideos).then(res=>{
+                            console.log(res);
+                        })
+                      
+                    }
+                });
+      
+            }else{
+                console.log("No hay videos para unir");
+            }
+        })
+    }
 
     /*
     async cutVideos(arrVideos:any []){}

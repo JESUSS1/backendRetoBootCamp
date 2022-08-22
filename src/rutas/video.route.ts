@@ -3,7 +3,8 @@ import { Router, } from 'restify-router';
 import videoController from '../controllers/video.controller';
 import RedditVideosController from '../controllers/redditVideos.controller';
 import redditVideosController from '../controllers/redditVideos.controller';
-
+import YoutubeController from '../controllers/youtube.controller';
+import editorVideosController from '../controllers/editorVideos.controller';
 
 const router = new Router();
 
@@ -48,6 +49,28 @@ router.post('/unirVideos', async (req, res):Promise<Response> => {
   try {
       const {nameVideo,extension} = req.body;
       await redditVideosController.unirVideos(nameVideo,extension);  
+
+      return res.json({sucess:true}); 
+  } catch (error) {
+      return res.json({sucess:false,error:error.stack});
+  }
+});
+
+router.post('/unirVideosv2', async (req, res):Promise<Response> => {
+  try {
+      const {ubicacionCarpetaVideos,nameVideoFinal,extensionInput,extensionOutput,cantidadThreads} = req.body;
+      await editorVideosController.joinVideosV2(ubicacionCarpetaVideos,nameVideoFinal,extensionInput,extensionOutput,cantidadThreads);  
+
+      return res.json({sucess:true}); 
+  } catch (error) {
+      return res.json({sucess:false,error:error.stack});
+  }
+});
+
+router.post('/uploadVideoYoutube', async (req, res):Promise<Response> => {
+  try {
+      const {ubicacionArchivo,title,description,keywords,category,privacyStatus} = req.body;
+      await YoutubeController.uploadVideo(ubicacionArchivo,title,description,keywords,category,privacyStatus);  
 
       return res.json({sucess:true}); 
   } catch (error) {

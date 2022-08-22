@@ -3,3 +3,7 @@ srcVideos/*
 srcConvert/*
 package-lock.json
 listaUbicacionVideosC.txt
+listaUbicacionVideosV2.txt
+client_secrets.json
+simple_upload_video.py-oauth2.json
+upload.py

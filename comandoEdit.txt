@@ -37,11 +37,7 @@ ffmpeg -i video1.mp4 -lavfi '[0:v]scale=ih*16/9:-1,boxblur=luma_radius=min(h\,w)
 ffmpeg -i video1.mp4 -threads 4 -lavfi [0:v]scale=ih*16/9:-1,boxblur=luma_radius=min(h\,w)/20:luma_power=1:chroma_radius=min(cw\,ch)/20:chroma_power=1[bg];[bg][0:v]overlay=(W-w)/2:(H-h)/2,crop=h=iw*9/16 -vb 800K danceblur.mp4
 ffmpeg -i video2.mp4 -lavfi [0:v]scale=ih*16/9:-1,boxblur=luma_radius=min(h\,w)/20:luma_power=1:chroma_radius=min(cw\,ch)/20:chroma_power=1[bg];[bg][0:v]overlay=(W-w)/2:(H-h)/2,crop=h=iw*9/16 -vb 800K danceblur.mp4
 ------------------
-
-
-
-
-
+probando funcionalidad mediantes archivos bat
 @echo off
 SetLocal EnableDelayedExpansion
 
@@ -76,6 +72,10 @@ echo file data/%%G >> nombreVideos.txt
 )
 ffmpeg -f concat -safe 0 -i nombreVideos.txt -threads 2 final.mp4
 
+
+subir video, ejecutar desde entorno virtual de python creado o desde tu mismo pyton aunque segun lei no se recomienda
+C:\Windows\SysWOW64\v_youtube_upload\Scripts
+python D:\cursos\backendRetoBootCamp\simple_upload_video.py --file="D:\cursos\backendRetoBootCamp\videotest1.mp4" --title="test video" --description="probando..." --keywords="youtube api,hola test" --category="22" --privacyStatus="private"
 
 
 
