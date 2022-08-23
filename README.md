@@ -14,7 +14,7 @@ El archivo **simple_upload_video.py** que nos permite poder subir el video a you
 - Renombrar el archivo **client_secretsEjemplo.json** por **client_secrets.json** y colocar su client_id y client_secret obtenidos despues de haber cumplido los requisitos de  **[YouTube Data API]**
 - Verificar su cuenta de youtube que uso para cumplir con los requisitos de Youtube API **https://www.youtube.com/verify**
 - Instalar mongo DB y configurar el archivo de **.env** modificando la conexción a su base de datos
-- Tener encendido el servidor de mongo antes de arrancarel proyecto
+- Tener encendido el servidor de mongo antes de arrancar el proyecto
 
 ## Installation
 
