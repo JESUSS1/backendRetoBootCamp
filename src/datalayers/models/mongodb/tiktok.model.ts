@@ -1,4 +1,4 @@
-import mongoose,{Schema} from "mongoose";
+import {Schema} from "mongoose";
 import { connectDBProcess } from "../../databases/mongo";
 
 const TikTokSchema = new Schema({

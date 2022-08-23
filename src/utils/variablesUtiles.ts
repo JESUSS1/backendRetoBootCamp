@@ -17,6 +17,8 @@ export const tipoProcesos = {
     'createFileRutas': 'createFileRutas',
     'reubicando':'reubicando',
     'test':'test',
+    'eliminarArchivos':'eliminarArchivos',
+    'verificarDirectorios':'verificarDirectorios',
 }
 
 export const listaComandos = {
@@ -24,6 +26,8 @@ export const listaComandos = {
     'youtubedl': 'youtube-dl',
     'dir': 'dir',
     'ffmpeg':'ffmpeg',
-    'default':'',
+    'rm':'rm',
     'ejecucionArchivo':'',
+    'default':'',
+    'mkdir':'mkdir'
 }

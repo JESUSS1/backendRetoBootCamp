@@ -1,30 +1,6 @@
-import { spawn } from 'child_process'
-import path from "path";
-import fs from "fs";
-
-const tipoProcesos = {
-    'urls': 'urls',
-    'download': 'download',
-    'getNameVideos': 'getNameVideos',
-    'setFiltro': 'setFiltro',
-    'joinVideos': 'joinVideos',
-    'createFileRutas': 'createFileRutas',
-}
-
-const listaComandos = {
-    'curl': 'curl',
-    'youtubedl': 'youtube-dl',
-    'dir': 'dir',
-    'ffmpeg':'ffmpeg',
-    'default':'',
-}
-
-//path.join(__dirname, '..', 'test', 'karma.conf.js')  Ejemplo : (ruta,retroceso,carpeta,archivo)
-const dirRaiz = path.join(__dirname, '../..');
-const videoSource = {
-    srcVideo: `${dirRaiz}\\srcvideos\\`,
-    srcVideoOutput: `${dirRaiz}\\srcConvert\\`,
-}
+import {tipoProcesos,listaComandos,videoSource,dirRaiz} from '../utils/variablesUtiles'
+import ProcesosControler from '../controllers/procesos.controller'
+import ReddidModel from '../datalayers/models/mongodb/reddidVideos.model';
 
 class RedditVideosController{
     
@@ -37,13 +13,16 @@ class RedditVideosController{
                 `-H "User-agent: 'your bot 0.1'" https://www.reddit.com/r/TikTokCringe/top.json?limit=${cantidadVideos} | jq . | grep url_overridden_by_dest"`,              
             ]
             //Descargarmos los enlaces de los videos
-            this.procesoShell(listaComandos.curl,args,tipoProcesos.urls)
+            ProcesosControler.procesoShell(listaComandos.curl,args,tipoProcesos.urls)
                 .then(data =>{
-                    //console.log(data);
+                    //Guardamos los enlaces en la BD
+                    let videoLink = data.toString().split(' ');
+                    const reddidVideosSave = new  ReddidModel({videoLink})
+                    reddidVideosSave.save().then(resp=>console.log(resp)).catch(err=>console.log(err));
 
                     let args = ['--config-location','youtube-dl.conf',data];
                     //Descargamos los videos
-                    this.procesoShell(listaComandos.youtubedl,args,tipoProcesos.download).then(data =>{
+                    ProcesosControler.procesoShell(listaComandos.youtubedl,args,tipoProcesos.download).then(data =>{
                         this.rotateVideooBackgroundFilter()
                     });
                 })
@@ -56,77 +35,12 @@ class RedditVideosController{
         }
     }   
 
-   async procesoShell(comando:string,args:any,proceso:string){
-    return new Promise((resolve, reject) => {
-        const opts = { shell: true }
-
-        var child = spawn(comando, (args), opts);
-        console.log("INICIO");
-        let resultados = '';
-
-        //para saber lo que sale
-        child.stdout.on('data', (data: any) => {         
-            switch(proceso){
-                case tipoProcesos.urls:
-                    resultados += data.toString();
-                    break;
-                case tipoProcesos.getNameVideos:
-                    resultados += data.toString();
-                    break;
-                default:
-                    console.log(`stdout: ${data}`);
-                break;    
-            }      
-        });
-
-        //monitorear los errores
-        child.stderr.on('data', (data: any) => {
-            console.error(`stderr: ${data}`);
-        });
-
-        //para saber si se termino el proceso | cuando termina 
-        child.on('close', (code: any) => {
-            console.log(`child process exited with code ${code}`);
-            switch(proceso){
-                case tipoProcesos.urls:
-                    const regEnlaces = /https:\/\/v\.redd\.it\/\w{13}/g;
-                    resultados = resultados.toString().match(regEnlaces).toString().replace(/,/g," ");
-                    resolve(resultados) //obtenemos las urls de los videos
-                    break;
-                case tipoProcesos.download:
-                    resolve(`proceso download terminado => ${code}`)
-                    break;
-                case tipoProcesos.getNameVideos:
-                    resultados = resultados.replace(/(\r\n|\n|\r)/gm, ",").slice(0, -1);
-                    resolve(resultados) //obtenemos las nombres de los videos
-                    break;
-                default:
-                    resolve(`proceso terminado => ${code}`)
-                break;    
-            }      
-        });
-
-        //si se produce un error   
-        child.on('error', (code: any) => {
-            reject(`proceso con errores => ${code}`)
-        });
-        //envia mensajes de regreso
-        child.on('message', (code: any) => {
-            console.log(`this is message from child.on =>`, code)
-        });
-
-    
-    })
-   }
-
    async rotateVideooBackgroundFilter(){
     let args = [
         '/b',
         `${videoSource.srcVideo}*.mp4`];
     //obtenemos los nombres de los archivos .mp4
-    this.procesoShell(listaComandos.dir,args,tipoProcesos.getNameVideos)
-    .then(result =>{
-
+    ProcesosControler.procesoShell(listaComandos.dir,args,tipoProcesos.getNameVideos).then(result =>{
         let listVideos = result.toString().split(',');
         //Bucle Funciones recursivas
         const doNextPromise =(position:any=0)=>{
@@ -139,10 +53,11 @@ class RedditVideosController{
                 '-vb 800K',
                 `${videoSource.srcVideoOutput}${listVideos[position]}`];
 
-            this.procesoShell(listaComandos.ffmpeg,args,tipoProcesos.setFiltro).then(res=>{
+                ProcesosControler.procesoShell(listaComandos.ffmpeg,args,tipoProcesos.setFiltro).then(res=>{
                 console.log(res);
             }).catch(err =>{console.log(err)});
             position++;
+
             if (position < listVideos.length)
                 doNextPromise(position)
             else
@@ -151,18 +66,16 @@ class RedditVideosController{
     
         doNextPromise(0);
 
-
     }).catch(x=>{console.log(x)});
    }
+   
    async unirVideos(nameVideo:any,extension:any=".mp4"){
-
-    //console.log(nameArchivo);
     let args = [
         '/b',
         `${videoSource.srcVideoOutput}*.mp4`];
     
     //obtenemos los nombres de los archivos .mp4    
-    this.procesoShell(listaComandos.dir,args,tipoProcesos.getNameVideos).then(nameV=>{
+    ProcesosControler.procesoShell(listaComandos.dir,args,tipoProcesos.getNameVideos).then(nameV=>{
         //let listVideos = nameV.toString().split(',');
         if(nameV!=""){
             const nameListVideosC = `listaUbicacionVideosC.txt`;
@@ -171,7 +84,7 @@ class RedditVideosController{
             let listVideos =  'file srcConvert\\\\'+nameV.toString().replace(/,/g,'\nfile srcConvert\\\\')
             //console.log(listVideos);
             
-            this.createArchivoTxt(nameListVideosC,listVideos).then(errorCreation=>{
+            ProcesosControler.createArchivoTxt(nameListVideosC,listVideos).then(errorCreation=>{
                 if(errorCreation==null){
                     let args = [
                         '-f',
@@ -181,7 +94,7 @@ class RedditVideosController{
                         '-threads 2',
                         `srcVideos\\${nameVideo}${extension}`];
                 
-                    this.procesoShell(listaComandos.ffmpeg,args,tipoProcesos.joinVideos).then(res=>{
+                    ProcesosControler.procesoShell(listaComandos.ffmpeg,args,tipoProcesos.joinVideos).then(res=>{
                         console.log(res);
                     })
                   
@@ -196,36 +109,9 @@ class RedditVideosController{
 
    }
 
-   async createArchivoTxt(nameArchivo:string,cadenaTexto:string){
-    return new Promise((resolve, reject) =>{
-
-        var stream = fs.createWriteStream(nameArchivo);
-            stream.once('open', function(fd) {
-            stream.write(cadenaTexto);
-            stream.end();
-            });
-        resolve(null);
-        
-       /* const bucleEsperar =()=>{
-            fs.stat(nameArchivo, function(err) {
-                if (err == null) {
-                    console.log("El archivo existe");
-                    resolve(err);
-                } else if (err.code == 'ENOENT') {
-                    console.log("el archivo no existe");
-                    setTimeout(bucleEsperar,500)  
-                } else {
-                    console.log(err); // ocurrió algún error
-                    reject(err);
-                }
-            })    
-        }  
-
-        setTimeout(bucleEsperar,2000)  
-*/
-    });
-    
-  } 
+   async getLinkReddidVideos(){
+        return ReddidModel.find();
+   }
 
 }
 

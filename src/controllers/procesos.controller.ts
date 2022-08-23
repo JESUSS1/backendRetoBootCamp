@@ -1,6 +1,5 @@
 import { spawn } from 'child_process'
-import path from "path";
-import {tipoProcesos} from '../utils/variablesUtiles'
+import {tipoProcesos,listaComandos,videoSource} from '../utils/variablesUtiles'
 import fs from "fs";
 
 class ProcesosControler{
@@ -10,7 +9,6 @@ class ProcesosControler{
             const opts = { shell: true }
     
             var child = spawn(comando, (args), opts);
-            console.log("INICIO");
             let resultados = '';
     
             //para saber lo que sale
@@ -33,12 +31,17 @@ class ProcesosControler{
     
             //monitorear los errores
             child.stderr.on('data', (data: any) => {
-                console.error(`stderr: ${data}`);
+                if(tipoProcesos.verificarDirectorios = proceso){
+                    console.log(`Verificancion de Directorio ${args[0]} existente : true`);
+                }else{
+                    console.error(`stderr: ${data}`);
+                }
+    
             });
     
             //para saber si se termino el proceso | cuando termina 
             child.on('close', (code: any) => {
-                console.log(`child process exited with code ${code}`);
+                //console.log(`child process exited with code ${code}`);
                 switch(proceso){
                     case tipoProcesos.urls:
                         const regEnlaces = /https:\/\/v\.redd\.it\/\w{13}/g;
@@ -52,7 +55,7 @@ class ProcesosControler{
                         resultados = resultados.replace(/(\r\n|\n|\r)/gm, ",").slice(0, -1);
                         resolve(resultados) //obtenemos las nombres de los videos
                         break;
-                    case tipoProcesos.test:
+                    case tipoProcesos.verificarDirectorios:
                         resolve(`proceso terminado => ${code}`)
                         break;
                     default:
@@ -85,6 +88,41 @@ class ProcesosControler{
         });
         
       } 
+
+    async clearDirectorios(){
+        //borramos los archivos de la carpeta srcVideos y srcConvert
+        let args = [
+            `srcvideos/*` //no funciona ¿? ${videoSource.srcVideo}*
+        ];
+        await this.procesoShell(listaComandos.rm,args,tipoProcesos.eliminarArchivos).then(resulDelete1=>{
+            console.log(resulDelete1);
+            let args = [
+                `srcConvert/*` //no funciona ¿? ${videoSource.srcVideoOutput}*
+            ];
+            this.procesoShell(listaComandos.rm,args,tipoProcesos.eliminarArchivos).then(resulDelete2=>{
+                console.log(resulDelete2);
+            }).catch(err =>{console.log(err)})
+        
+        }).catch(err =>{console.log(err)})
+    }
+    async verificarDirectorios(){
+        //verificamos que existan los directorios srcVideos y srcConvert
+        let args = [
+            `srcvideos` 
+        ];
+        await this.procesoShell(listaComandos.mkdir,args,tipoProcesos.verificarDirectorios).then(resVerificacion=>{
+            console.log(resVerificacion);
+            let args = [
+                `srcConvert` 
+            ];
+            this.procesoShell(listaComandos.mkdir,args,tipoProcesos.verificarDirectorios).then(resVerificacion=>{
+                console.log(resVerificacion);
+                console.log("-------------------------------------")
+            }).catch(err =>{console.log(err)})
+        
+        }).catch(err =>{console.log(err)})
+    }
+
 
 }
 export default new ProcesosControler();

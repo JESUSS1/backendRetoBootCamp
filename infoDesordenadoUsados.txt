@@ -80,3 +80,24 @@ python D:\cursos\backendRetoBootCamp\simple_upload_video.py --file="D:\cursos\ba
 
 
 
+ py -m ensurepip --upgrade
+ py -m pip install --upgrade pip
+
+virtualenv   v_youtube_upload
+
+
+C:\Windows\SysWOW64\v_youtube_upload\Scripts
+pip.exe install --upgrade google-api-python-client
+pip.exe install --upgrade google-auth-oauthlib google-auth-httplib2
+pip.exe install --upgrade oauth2client
+
+verificar cuenta de youtube
+https://www.youtube.com/verify
+
+
+
+python D:\cursos\backendRetoBootCamp\simple_upload_video.py --file="D:\cursos\backendRetoBootCamp\videotest1.mp4" --title="test video" --description="probando..." --keywords="youtube api,hola test" --category="22" --privacyStatus="private"
+
+
+https://developers.google.com/youtube/v3/quickstart/python
+https://developers.google.com/youtube/v3/guides/uploading_a_video?hl=es-419

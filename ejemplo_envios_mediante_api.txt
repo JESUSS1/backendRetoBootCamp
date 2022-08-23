@@ -1,0 +1,60 @@
+
+Ejemplo1 : cortar video, corta el video encontrado en la carpeta srcvideos
+direccion: http://localhost:3000/api/v1/video/cutvideo
+POST Body:
+{
+  "nameVideo":"video1",
+  "startTime":"00:00:00",
+  "endTime":"00:00:10",
+  "numberCpusAvailables":"2"
+}
+
+Ejemplo2: obtiene los videos de reddid, los transforma de modo que el fordo negro cambia a una forma borrasa , los almacena en srcConvert   
+direccion:http://localhost:3000/api/v1/video/getVideosBgFilter
+POST Body
+{
+  "cantidadVideos":2
+}
+
+Ejemplo3: une todos los videos que se encuentran en la carpeta srcConvert y le da un nombre y una extension.   
+direccion:http://localhost:3000/api/v1/video/unirVideos
+POST Body
+{
+  "nameVideo":"videoRecopilacion",
+  "extension":".mp4"
+}
+
+Ejemplo4: une todos los videos version2, que se encuentran en la ruta data por el usuario e indica 
+que tipo de formato de videos son los que entran o se toman en cuenta para unirlos, se indica el nombre 
+del video y la extension del video unido y se indica con cuantos hilos del procesador se va a trabajar. 
+direccion:http://localhost:3000/api/v1/video/unirVideosv2
+POST Body
+{
+  "ubicacionCarpetaVideos":"D:\\videos",
+  "nameVideoFinal":"retobackend",
+  "extensionInput":".mkv",
+  "extensionOutput":".mp4",
+  "cantidadThreads":"3"
+}
+
+
+Ejemplo5: sube el video a youtube
+Obtener los ID de las categorias de Youtuve : https://developers.google.com/youtube/v3/docs/videoCategories/list?hl=es
+direccion:http://localhost:3000/api/v1/video/uploadVideoYoutube
+POST Body
+{
+  "ubicacionArchivo":"D:\\cursos\\backendRetoBootCamp\\srcvideos\\videoRecopilacion.mp4",
+  "title":"recopilacion de videos de tiktoks",
+  "description":"videos recopilados de reddid",
+  "keywords":"",
+  "category":"24",
+  "privacyStatus":"unlisted"
+}
+
+Ejemplo6: Elimina los videos de las carpetas srcConvert y srcvideos
+direccion:http://localhost:3000/api/v1/video/clearDirectorios
+GET
+
+Ejemplo7: Obtiene los enlaces de los videos de reddid que se obtuvo al descargar los videos
+direccion:http://localhost:3000/api/v1/video/listarLinksVideosReddid
+GET
