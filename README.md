@@ -1,7 +1,7 @@
 # Introducción
 ### Reto backend
 
-Proyecto realiado con node, typescript y mongo db que optimiza el proceso de obtencion de videos de reddid, transformación de los mismos, union de videos y subida de videos a la plataforma de youtube usando **YouTube Data API** y **FFmpeg** inspirado en el video de youtube de **[BugsWriter]**. Este proyecto funciona inicialmente para windows, no se aun probando en linux y puede que halla problemas con las rutas se se ejecuta en linux.
+Proyecto realiado con node, typescript y mongo db que optimiza el proceso de obtencion de videos de reddid, transformación de los mismos, union de videos y subida de videos a la plataforma de youtube usando **YouTube Data API** y **FFmpeg** inspirado en el video de youtube de **[BugsWriter]**. Este proyecto funciona inicialmente para windows, no se aun probando en linux y puede que halla problemas con las rutas si se ejecuta en linux.
 El archivo **simple_upload_video.py** que nos permite poder subir el video a youtube usa el codigo de ejemplo de **YouTube Data API**. pero fue modificado ligeramente para poder trabajar con python3.
 
 ### Requerimientos
